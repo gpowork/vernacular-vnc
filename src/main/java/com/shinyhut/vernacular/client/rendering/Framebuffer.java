@@ -4,6 +4,8 @@ import com.shinyhut.vernacular.client.VncSession;
 import com.shinyhut.vernacular.client.exceptions.UnexpectedVncException;
 import com.shinyhut.vernacular.client.exceptions.VncException;
 import com.shinyhut.vernacular.client.rendering.renderers.*;
+import com.shinyhut.vernacular.protocol.desktop.ExtendedDesktopConfiguration;
+import com.shinyhut.vernacular.protocol.desktop.Screen;
 import com.shinyhut.vernacular.protocol.messages.*;
 import com.shinyhut.vernacular.protocol.messages.Rectangle;
 
@@ -11,10 +13,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -51,7 +56,36 @@ public class Framebuffer {
         try {
             for (int i = 0; i < update.getNumberOfRectangles(); i++) {
                 Rectangle rectangle = Rectangle.decode(in);
-                if (rectangle.getEncoding() == DESKTOP_SIZE) {
+                if (rectangle.getEncoding() == EXTENDED_DESKTOP_SIZE) {
+                    try {
+                        DataInputStream dis = new DataInputStream(in);
+                        ExtendedDesktopConfiguration edc = new ExtendedDesktopConfiguration();
+                        edc.setWidth(rectangle.getWidth());
+                        edc.setHeight(rectangle.getHeight());
+                        edc.setX(rectangle.getX());
+                        edc.setY(rectangle.getY());
+                        edc.setNumberOfScreens(dis.readByte());
+
+                        dis.skipBytes(3);
+                        Screen[] screens = new Screen[edc.getNumberOfScreens()];
+
+                        for(int x = 0; x < edc.getNumberOfScreens(); ++x) {
+                            Screen s = new Screen();
+                            s.setId(dis.readInt());
+                            s.setX(dis.readUnsignedShort());
+                            s.setY(dis.readUnsignedShort());
+                            s.setWidth(dis.readUnsignedShort());
+                            s.setHeight(dis.readUnsignedShort());
+                            s.setFlags(dis.readInt());
+                            screens[x] = s;
+                        }
+                        edc.setScreens(screens);
+                        session.setExtendedDesktopConfiguration(edc);
+                    } catch(IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    resizeFramebuffer(rectangle);
+                } else if (rectangle.getEncoding() == DESKTOP_SIZE) {
                     resizeFramebuffer(rectangle);
                 } else if (rectangle.getEncoding() == CURSOR) {
                     updateCursor(rectangle, in);

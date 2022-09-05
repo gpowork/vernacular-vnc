@@ -263,6 +263,22 @@ public class VernacularClient {
     }
 
     /**
+     * Initiates client-originated resize event
+     *
+     * @param width new screen width
+     * @param height new screen height
+     */
+    public void resize(int width, int height) {
+        if (clientEventHandler != null && session.isExtendedDesktopConfigurationSupported()) {
+            try {
+                clientEventHandler.clientResize(width,height);
+            } catch (IOException e) {
+                handleError(new UnexpectedVncException(e));
+            }
+        }
+    }
+
+    /**
      * Is the client currently running?
      *
      * @return true if the client is currently running, false otherwise

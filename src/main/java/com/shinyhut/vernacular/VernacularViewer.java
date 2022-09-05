@@ -2,6 +2,7 @@ package com.shinyhut.vernacular;
 
 import com.shinyhut.vernacular.client.VernacularClient;
 import com.shinyhut.vernacular.client.VernacularConfig;
+import com.shinyhut.vernacular.utils.ComponentResizeEndListener;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
@@ -47,6 +48,9 @@ public class VernacularViewer extends JFrame {
     private JMenuItem hextileMenuItem;
     private JMenuItem zlibMenuItem;
     private JMenuItem extendedClipboardMenuItem;
+    private JMenuItem extendedDesktopSizeMenuItem;
+
+    private boolean skipNextResizeEvent;
 
     private Image lastFrame;
 
@@ -110,6 +114,7 @@ public class VernacularViewer extends JFrame {
 
         addMenu();
         addMouseListeners();
+        addResizeListener();
         addKeyListener();
         addDrawingSurface();
         initialiseVernacularClient();
@@ -125,6 +130,20 @@ public class VernacularViewer extends JFrame {
         repaint();
     }
 
+    private void addResizeListener() {
+        addComponentListener(new ComponentResizeEndListener() {
+
+            @Override
+            public void resizeTimedOut(int newWidth, int newHeight) {
+                if(skipNextResizeEvent) {
+                    skipNextResizeEvent = false;
+                    return;
+                }
+                client.resize(newWidth, newHeight);
+                System.out.println("Resize: " + newWidth + "x" + newHeight);
+            }
+        });
+    }
     private void addKeyListener() {
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
@@ -224,6 +243,7 @@ public class VernacularViewer extends JFrame {
         config.setRemoteClipboardListener(t -> getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(t), null));
         config.setUseLocalMousePointer(localCursorMenuItem.isSelected());
         config.setEnableExtendedClipboardEncoding(true);
+        config.setEnableExtendedDesktopSize(true);
         client = new VernacularClient(config);
     }
 
@@ -277,12 +297,17 @@ public class VernacularViewer extends JFrame {
         extendedClipboardMenuItem.setSelected(true);
         extendedClipboardMenuItem.addActionListener(event -> config.setEnableExtendedClipboardEncoding(extendedClipboardMenuItem.isSelected()));
 
+        extendedDesktopSizeMenuItem = new JCheckBoxMenuItem("EXT_DESKTOP_SIZE", false);
+        extendedDesktopSizeMenuItem.setSelected(true);
+        extendedDesktopSizeMenuItem.addActionListener(event -> config.setEnableExtendedDesktopSize(extendedDesktopSizeMenuItem.isSelected()));
+
         encodingsMenu = new JMenu("Enabled Encodings");
         encodingsMenu.add(copyrectMenuItem);
         encodingsMenu.add(rreMenuItem);
         encodingsMenu.add(hextileMenuItem);
         encodingsMenu.add(zlibMenuItem);
         encodingsMenu.add(extendedClipboardMenuItem);
+        encodingsMenu.add(extendedDesktopSizeMenuItem);
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.setMnemonic(VK_X);
@@ -432,6 +457,7 @@ public class VernacularViewer extends JFrame {
     private void setWindowSize(int width, int height) {
         getContentPane().setPreferredSize(new Dimension(width, height));
         pack();
+        skipNextResizeEvent = true;
     }
 
     private int scaleMouseX(int x) {

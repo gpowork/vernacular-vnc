@@ -31,6 +31,8 @@ public class VernacularConfig {
     private boolean enableZLibEncoding = false;
     private boolean enableExtendedClipboardEncoding = false;
 
+    private boolean enableExtendedDesktopSize = false;
+
     public Supplier<String> getUsernameSupplier() {
         return usernameSupplier;
     }
@@ -252,7 +254,7 @@ public class VernacularConfig {
     /**
      * Enable or disable the Extended Clipboard encoding. This encoding is disabled by default because
      * it is a non-standard extension to RFB protocol supporting UTF-8 clipboard copy/paste operations.
-     * @param enableExtendedClipboardEncoding enable or disablle the Extended Clipboard Encoding.
+     * @param enableExtendedClipboardEncoding enable or disable the Extended Clipboard Encoding.
      */
     public void setEnableExtendedClipboardEncoding(boolean enableExtendedClipboardEncoding) {
         this.enableExtendedClipboardEncoding = enableExtendedClipboardEncoding;
@@ -265,4 +267,18 @@ public class VernacularConfig {
     public void setExtendedClipboardListener(Consumer<ServerCutText> extendedClipboardListener) {
         this.extendedClipboardListener = extendedClipboardListener;
     }
+
+    public boolean isEnableExtendedDesktopSize() {
+        return enableExtendedDesktopSize;
+    }
+
+    /**
+     * Enable or disable the Extended Desktop Side encoding. This encoding is disabled by default because
+     * it is a non-standard extension to RFB protocol supporting on-the-fly resolution change without server restart
+     * @param enableExtendedDesktopSize enable or disable the Extended Desktop Size Encoding.
+     */
+    public void setEnableExtendedDesktopSize(boolean enableExtendedDesktopSize) {
+        this.enableExtendedDesktopSize = enableExtendedDesktopSize;
+    }
 }
+

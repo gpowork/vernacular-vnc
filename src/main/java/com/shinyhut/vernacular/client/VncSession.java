@@ -1,5 +1,6 @@
 package com.shinyhut.vernacular.client;
 
+import com.shinyhut.vernacular.protocol.desktop.ExtendedDesktopConfiguration;
 import com.shinyhut.vernacular.protocol.messages.PixelFormat;
 import com.shinyhut.vernacular.protocol.messages.ProtocolVersion;
 import com.shinyhut.vernacular.protocol.messages.ServerInit;
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 public class VncSession {
 
@@ -19,6 +21,8 @@ public class VncSession {
     private ProtocolVersion protocolVersion;
     private ServerInit serverInit;
     private PixelFormat pixelFormat;
+
+    private ExtendedDesktopConfiguration extendedDesktopConfiguration;
 
     private volatile int framebufferWidth;
     private volatile int framebufferHeight;
@@ -31,6 +35,14 @@ public class VncSession {
         this.config = config;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
+    }
+
+    public void extendedDesktopConfigurationChanged() {
+       Consumer<ExtendedDesktopConfiguration> c = config.getExtendedDesktopListener();
+       if(c == null) {
+           return;
+       }
+       c.accept(this.extendedDesktopConfiguration);
     }
 
     public InputStream getInputStream() {
@@ -83,6 +95,17 @@ public class VncSession {
 
     public void setFramebufferHeight(int framebufferHeight) {
         this.framebufferHeight = framebufferHeight;
+    }
+
+    public boolean isExtendedDesktopConfigurationSupported() {
+        return this.extendedDesktopConfiguration != null;
+    }
+    public ExtendedDesktopConfiguration getExtendedDesktopConfiguration() {
+        return extendedDesktopConfiguration;
+    }
+
+    public void setExtendedDesktopConfiguration(ExtendedDesktopConfiguration extendedDesktopConfiguration) {
+        this.extendedDesktopConfiguration = extendedDesktopConfiguration;
     }
 
     public void waitForFramebufferUpdate() throws InterruptedException {

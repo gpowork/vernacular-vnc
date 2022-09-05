@@ -66,6 +66,11 @@ public class Initializer {
         }
 
         encodings.add(RAW);
+
+        if(config.isEnableExtendedDesktopSize()) {
+            encodings.add(EXTENDED_DESKTOP_SIZE);
+        }
+        //fall back to "standard" encoding
         encodings.add(DESKTOP_SIZE);
 
         if (config.isUseLocalMousePointer()) {

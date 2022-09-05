@@ -97,6 +97,15 @@ public class ClientEventHandler {
         sendMessage(message);
     }
 
+    void clientResize(int width, int height) throws  IOException {
+        //Safeguard in case server does not allow client-initiated resizes
+        if(!session.isExtendedDesktopConfigurationSupported()) {
+            return;
+        }
+        SetDesktopSize message = new SetDesktopSize(session.getExtendedDesktopConfiguration(), width, height);
+        sendMessage(message);
+    }
+
     private void updateMouseStatus() throws IOException {
         PointerEvent message = new PointerEvent(mouseX, mouseY, buttons);
         sendMessage(message);
