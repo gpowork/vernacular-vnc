@@ -81,6 +81,7 @@ public class Framebuffer {
                         }
                         edc.setScreens(screens);
                         session.setExtendedDesktopConfiguration(edc);
+                        session.extendedDesktopConfigurationChanged();
                     } catch(IOException ex) {
                         ex.printStackTrace();
                     }

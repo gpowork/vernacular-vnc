@@ -263,6 +263,12 @@ public class VernacularClient {
     }
 
     /**
+     * @return true if resize function is supported by the server
+     */
+    public boolean isResizeSupported() {
+        return session.isExtendedDesktopConfigurationSupported();
+    }
+    /**
      * Initiates client-originated resize event
      *
      * @param width new screen width

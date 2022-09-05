@@ -2,6 +2,7 @@ package com.shinyhut.vernacular.client;
 
 import com.shinyhut.vernacular.client.exceptions.VncException;
 import com.shinyhut.vernacular.client.rendering.ColorDepth;
+import com.shinyhut.vernacular.protocol.desktop.ExtendedDesktopConfiguration;
 import com.shinyhut.vernacular.protocol.messages.ServerCutText;
 
 import java.awt.*;
@@ -20,6 +21,7 @@ public class VernacularConfig {
     private Consumer<Void> bellListener;
     private Consumer<String> remoteClipboardListener;
     private Consumer<ServerCutText> extendedClipboardListener;
+    private Consumer<ExtendedDesktopConfiguration> extendedDesktopListener;
     private BiConsumer<Image, Point> mousePointerUpdateListener;
     private boolean shared = true;
     private int targetFramesPerSecond = 30;
@@ -279,6 +281,14 @@ public class VernacularConfig {
      */
     public void setEnableExtendedDesktopSize(boolean enableExtendedDesktopSize) {
         this.enableExtendedDesktopSize = enableExtendedDesktopSize;
+    }
+
+    public Consumer<ExtendedDesktopConfiguration> getExtendedDesktopListener() {
+        return extendedDesktopListener;
+    }
+
+    public void setExtendedDesktopListener(Consumer<ExtendedDesktopConfiguration> extendedDesktopListener) {
+        this.extendedDesktopListener = extendedDesktopListener;
     }
 }
 
