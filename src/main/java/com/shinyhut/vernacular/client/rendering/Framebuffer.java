@@ -101,8 +101,8 @@ public class Framebuffer {
             }
             if (!noDataUpdate) {
                 paint();
-                session.framebufferUpdated();
             }
+            session.framebufferUpdated();
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
         }

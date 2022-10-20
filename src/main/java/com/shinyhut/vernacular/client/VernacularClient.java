@@ -138,6 +138,12 @@ public class VernacularClient {
     }
 
     /**
+     * Requests immediate framebuffer refresh
+     */
+    public void forceRefresh() {
+        clientEventHandler.refresh();
+    }
+    /**
      * 'Clicks' (presses and releases) the specified mouse button.
      * <p>
      * This is equivalent to calling {@link #updateMouseButton(int, boolean)} twice in quick succession with

@@ -106,6 +106,10 @@ public class ClientEventHandler {
         sendMessage(message);
     }
 
+    void refresh() {
+        lastFramebufferUpdateRequestTime = null;
+    }
+
     private void updateMouseStatus() throws IOException {
         PointerEvent message = new PointerEvent(mouseX, mouseY, buttons);
         sendMessage(message);
