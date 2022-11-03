@@ -21,11 +21,11 @@ public class SetDesktopSize implements Encodable {
     @Override
     public void encode(OutputStream out) throws IOException {
         DataOutput dataOutput = new DataOutputStream(out);
-        dataOutput.write(251);
+        dataOutput.writeByte(0xfb);
         dataOutput.writeByte(0x00); //padding
         dataOutput.writeShort(width);
         dataOutput.writeShort(height);
-        dataOutput.write(edc.getNumberOfScreens());
+        dataOutput.writeByte(edc.getNumberOfScreens());
         dataOutput.writeByte(0x00); //padding
         for(int i = 0; i < edc.getNumberOfScreens(); ++i) {
             Screen s = edc.getScreens()[i];

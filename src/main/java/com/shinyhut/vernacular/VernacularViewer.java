@@ -2,6 +2,7 @@ package com.shinyhut.vernacular;
 
 import com.shinyhut.vernacular.client.VernacularClient;
 import com.shinyhut.vernacular.client.VernacularConfig;
+import com.shinyhut.vernacular.protocol.desktop.ExtendedDesktopConfiguration;
 import com.shinyhut.vernacular.utils.ComponentResizeEndListener;
 
 import javax.swing.*;
@@ -11,6 +12,9 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.shinyhut.vernacular.client.rendering.ColorDepth.*;
 import static java.awt.BorderLayout.CENTER;
@@ -140,7 +144,7 @@ public class VernacularViewer extends JFrame {
                     return;
                 }
                 client.resize(newWidth, newHeight);
-                System.out.println("Resize: " + newWidth + "x" + newHeight);
+                System.out.println(timestamp() + "Resize: " + newWidth + "x" + newHeight);
             }
         });
     }
@@ -238,6 +242,7 @@ public class VernacularViewer extends JFrame {
         config.setUsernameSupplier(this::showUsernameDialog);
         config.setPasswordSupplier(this::showPasswordDialog);
         config.setScreenUpdateListener(this::renderFrame);
+        config.setExtendedDesktopListener(this::setDesktopConfiguration);
         config.setMousePointerUpdateListener((p, h) -> this.setCursor(getDefaultToolkit().createCustomCursor(p, h, "vnc")));
         config.setBellListener(v -> getDefaultToolkit().beep());
         config.setRemoteClipboardListener(t -> getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(t), null));
@@ -245,6 +250,10 @@ public class VernacularViewer extends JFrame {
         config.setEnableExtendedClipboardEncoding(true);
         config.setEnableExtendedDesktopSize(true);
         client = new VernacularClient(config);
+    }
+
+    private void setDesktopConfiguration(ExtendedDesktopConfiguration conf) {
+        System.out.println(timestamp() + "EDC received");
     }
 
     private void addMenu() {
@@ -423,7 +432,13 @@ public class VernacularViewer extends JFrame {
         return client != null && client.isRunning();
     }
 
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS  ");
+
+    private String timestamp() {
+        return sdf.format(new Date());
+    }
     private void renderFrame(Image frame) {
+        System.out.println(timestamp() + "FRAME");
         if (resizeRequired(frame)) {
             resizeWindow(frame);
         }

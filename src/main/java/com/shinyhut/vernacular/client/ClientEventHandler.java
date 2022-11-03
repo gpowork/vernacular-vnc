@@ -107,6 +107,13 @@ public class ClientEventHandler {
     }
 
     void refresh() {
+        try {
+            requestFramebufferUpdate(false);
+        } catch (IOException e) {
+            if (running) {
+                errorHandler.accept(new UnexpectedVncException(e));
+            }
+        }
         lastFramebufferUpdateRequestTime = null;
     }
 

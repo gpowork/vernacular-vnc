@@ -99,9 +99,7 @@ public class Framebuffer {
                     renderers.get(rectangle.getEncoding()).render(in, frame, rectangle);
                 }
             }
-            if (!noDataUpdate) {
-                paint();
-            }
+            paint();
             session.framebufferUpdated();
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
