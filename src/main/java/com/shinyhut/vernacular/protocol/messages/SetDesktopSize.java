@@ -20,7 +20,7 @@ public class SetDesktopSize implements Encodable {
 
     @Override
     public void encode(OutputStream out) throws IOException {
-        DataOutput dataOutput = new DataOutputStream(out);
+        DataOutputStream dataOutput = new DataOutputStream(new BufferedOutputStream(out));
         dataOutput.writeByte(0xfb);
         dataOutput.writeByte(0x00); //padding
         dataOutput.writeShort(width);
@@ -36,5 +36,6 @@ public class SetDesktopSize implements Encodable {
             dataOutput.writeShort(height);
             dataOutput.writeInt(0);
         }
+        dataOutput.flush();
     }
 }

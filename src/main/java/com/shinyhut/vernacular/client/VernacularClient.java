@@ -140,8 +140,8 @@ public class VernacularClient {
     /**
      * Requests immediate framebuffer refresh
      */
-    public void forceRefresh() {
-        clientEventHandler.refresh();
+    public void forceRefresh(boolean incremental) {
+        clientEventHandler.refresh(incremental);
     }
     /**
      * 'Clicks' (presses and releases) the specified mouse button.

@@ -106,9 +106,9 @@ public class ClientEventHandler {
         sendMessage(message);
     }
 
-    void refresh() {
+    void refresh(boolean incremental) {
         try {
-            requestFramebufferUpdate(false);
+            requestFramebufferUpdate(incremental);
         } catch (IOException e) {
             if (running) {
                 errorHandler.accept(new UnexpectedVncException(e));

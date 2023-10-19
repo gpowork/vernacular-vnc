@@ -56,12 +56,12 @@ public class Framebuffer {
         // An update containing an ExtendedDesktopSize rectangle must not contain any changes to the framebuffer data,
         // neither before nor after the ExtendedDesktopSize rectangle.
         // https://github.com/rfbproto/rfbproto/blob/master/rfbproto.rst
-        boolean noDataUpdate = false;
+        boolean extendedDesktopSizeReceived = false;
         try {
             for (int i = 0; i < update.getNumberOfRectangles(); i++) {
                 Rectangle rectangle = Rectangle.decode(in);
                 if (rectangle.getEncoding() == EXTENDED_DESKTOP_SIZE) {
-                    noDataUpdate = true;
+                    extendedDesktopSizeReceived = true;
                     try {
                         DataInputStream dis = new DataInputStream(in);
                         ExtendedDesktopConfiguration edc = new ExtendedDesktopConfiguration();
@@ -86,7 +86,6 @@ public class Framebuffer {
                         }
                         edc.setScreens(screens);
                         session.setExtendedDesktopConfiguration(edc);
-                        session.extendedDesktopConfigurationChanged();
                     } catch(IOException ex) {
                         ex.printStackTrace();
                     }
@@ -99,7 +98,11 @@ public class Framebuffer {
                     renderers.get(rectangle.getEncoding()).render(in, frame, rectangle);
                 }
             }
-            paint();
+            if(extendedDesktopSizeReceived) {
+                session.extendedDesktopConfigurationChanged();
+            } else {
+                paint();
+            }
             session.framebufferUpdated();
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
