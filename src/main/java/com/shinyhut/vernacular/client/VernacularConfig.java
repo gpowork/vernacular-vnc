@@ -2,9 +2,11 @@ package com.shinyhut.vernacular.client;
 
 import com.shinyhut.vernacular.client.exceptions.VncException;
 import com.shinyhut.vernacular.client.rendering.ColorDepth;
+import com.shinyhut.vernacular.protocol.desktop.ExtendedDesktopConfiguration;
 import com.shinyhut.vernacular.protocol.messages.MessageHeaderFlags;
 
-import java.awt.*;
+import java.awt.Image;
+import java.awt.Point;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -21,6 +23,7 @@ public class VernacularConfig {
     private Consumer<Image> screenUpdateListener;
     private Consumer<Void> bellListener;
     private Consumer<String> remoteClipboardListener;
+    private Consumer<ExtendedDesktopConfiguration> extendedDesktopListener;
     private BiConsumer<Image, Point> mousePointerUpdateListener;
     private boolean shared = true;
     private int targetFramesPerSecond = 30;
@@ -31,6 +34,7 @@ public class VernacularConfig {
     private boolean enableRreEncoding = true;
     private boolean enableHextileEncoding = true;
     private boolean enableZLibEncoding = false;
+    private boolean enableExtendedDesktopSize = false;
 
     private Map<MessageHeaderFlags, Integer> maxSizePerFormat = new EnumMap<>(MessageHeaderFlags.class);
 
@@ -255,4 +259,30 @@ public class VernacularConfig {
     public Map<MessageHeaderFlags, Integer> getMaxSizePerFormat() {
         return maxSizePerFormat;
     }
+
+    public void setEnableExtendedClipboard(boolean enableExtendedClipboard) {
+        this.enableExtendedClipboard = enableExtendedClipboard;
+    }
+
+    public boolean isEnableExtendedDesktopSize() {
+        return enableExtendedDesktopSize;
+    }
+
+    /**
+     * Enable or disable the Extended Desktop Side encoding. This encoding is disabled by default because
+     * it is a non-standard extension to RFB protocol supporting on-the-fly resolution change without server restart
+     * @param enableExtendedDesktopSize enable or disable the Extended Desktop Size Encoding.
+     */
+    public void setEnableExtendedDesktopSize(boolean enableExtendedDesktopSize) {
+        this.enableExtendedDesktopSize = enableExtendedDesktopSize;
+    }
+
+    public Consumer<ExtendedDesktopConfiguration> getExtendedDesktopListener() {
+        return extendedDesktopListener;
+    }
+
+    public void setExtendedDesktopListener(Consumer<ExtendedDesktopConfiguration> extendedDesktopListener) {
+        this.extendedDesktopListener = extendedDesktopListener;
+    }
 }
+

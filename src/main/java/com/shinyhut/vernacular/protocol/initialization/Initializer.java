@@ -19,6 +19,7 @@ import static com.shinyhut.vernacular.protocol.messages.Encoding.COPYRECT;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.CURSOR;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.DESKTOP_SIZE;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.EXTENDED_CLIPBOARD;
+import static com.shinyhut.vernacular.protocol.messages.Encoding.EXTENDED_DESKTOP_SIZE;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.HEXTILE;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.RAW;
 import static com.shinyhut.vernacular.protocol.messages.Encoding.RRE;
@@ -77,7 +78,12 @@ public class Initializer {
         }
 
         encodings.add(RAW);
-        encodings.add(DESKTOP_SIZE);
+
+        if(config.isEnableExtendedDesktopSize()) {
+            encodings.add(EXTENDED_DESKTOP_SIZE);
+        } else {
+            encodings.add(DESKTOP_SIZE);
+        }
 
         if (config.isUseLocalMousePointer()) {
             encodings.add(CURSOR);

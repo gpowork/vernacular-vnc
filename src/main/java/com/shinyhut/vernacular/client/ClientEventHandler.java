@@ -9,6 +9,7 @@ import com.shinyhut.vernacular.protocol.messages.Encodable;
 import com.shinyhut.vernacular.protocol.messages.FramebufferUpdateRequest;
 import com.shinyhut.vernacular.protocol.messages.KeyEvent;
 import com.shinyhut.vernacular.protocol.messages.PointerEvent;
+import com.shinyhut.vernacular.protocol.messages.SetDesktopSize;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -113,6 +114,26 @@ public class ClientEventHandler {
             ClientCutText message = new ClientCutText(text);
             sendMessage(message);
         }
+    }
+
+    void clientResize(int width, int height) throws  IOException {
+        //Safeguard in case server does not allow client-initiated resizes
+        if(!session.isExtendedDesktopConfigurationSupported()) {
+            return;
+        }
+        SetDesktopSize message = new SetDesktopSize(session.getExtendedDesktopConfiguration(), width, height);
+        sendMessage(message);
+    }
+
+    void refresh(boolean incremental) {
+        try {
+            requestFramebufferUpdate(incremental);
+        } catch (IOException e) {
+            if (running) {
+                errorHandler.accept(new UnexpectedVncException(e));
+            }
+        }
+        lastFramebufferUpdateRequestTime = null;
     }
 
     private void updateMouseStatus() throws IOException {

@@ -138,6 +138,12 @@ public class VernacularClient {
     }
 
     /**
+     * Requests immediate framebuffer refresh
+     */
+    public void forceRefresh(boolean incremental) {
+        clientEventHandler.refresh(incremental);
+    }
+    /**
      * 'Clicks' (presses and releases) the specified mouse button.
      * <p>
      * This is equivalent to calling {@link #updateMouseButton(int, boolean)} twice in quick succession with
@@ -256,6 +262,28 @@ public class VernacularClient {
         if (clientEventHandler != null) {
             try {
                 clientEventHandler.copyText(text);
+            } catch (IOException e) {
+                handleError(new UnexpectedVncException(e));
+            }
+        }
+    }
+
+    /**
+     * @return true if resize function is supported by the server
+     */
+    public boolean isResizeSupported() {
+        return session.isExtendedDesktopConfigurationSupported();
+    }
+    /**
+     * Initiates client-originated resize event
+     *
+     * @param width new screen width
+     * @param height new screen height
+     */
+    public void resize(int width, int height) {
+        if (clientEventHandler != null && session.isExtendedDesktopConfigurationSupported()) {
+            try {
+                clientEventHandler.clientResize(width,height);
             } catch (IOException e) {
                 handleError(new UnexpectedVncException(e));
             }
